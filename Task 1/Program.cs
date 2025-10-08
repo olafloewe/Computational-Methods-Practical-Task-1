@@ -8,53 +8,84 @@ namespace Task_1 {
     internal class Program {
         public static string Convert(string source, int baseFrom, int baseTo) {
 
+            char[] sourceChars = source.ToCharArray();
+            double decimalRepresentation = 0;
+
             // sign related variables
             bool IsPositive = true;
 
             // prefix related variables
             string prefix = "";
-            string[] prefixes = { "0b", "0", "0x" };
+            string[] prefixes = { "0b", "0x", "0" };
 
             // digit related variables
-            bool digitsValid = true;
+            bool DigitsValid = true;
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 
 
-            // check for sign
-            if (source.ToCharArray()[0] == '-') IsPositive = false;
-            Console.WriteLine($"Positive: {IsPositive}");
+            // SIGN CHECK
+            if (sourceChars[0] == '-') IsPositive = false;
 
-            // check for prefix
+            // PREFIX CHECK
             int offset = IsPositive ? 0 : 1;
 
             // find if any prefix matches substring leading "source"
             foreach (string p in prefixes) {
-                if (source.Substring(offset, 2) == p) prefix = p;
+                if (source.Substring(offset, p.Length) == p) {
+                    prefix = p;
+                    break;
+                }
             }
-            Console.WriteLine($"Prefix: {prefix}");
 
-            // check for valid digits
+            if (prefix == "0" && baseFrom != 8) return "Error (source base ambiguous)";
+            if (prefix == "0b" && baseFrom != 2) return "Error (source base ambiguous)";
+            if (prefix == "0x" && baseFrom != 16) return "Error (source base ambiguous)";
+
+            // DIGIT VALIDITY CHECK
+
+            // get valid digits from all possible digits
             char[] validDigits = new char[baseFrom];
             Array.Copy(digits, validDigits, baseFrom);
 
-            // TODO slice prefix and negative off of source
-            char[] truncatedValidDigits = validDigits[3..];
-
-
-            // loop through source and check for digit match
-            foreach (char digit in source.ToCharArray()) {
-                Console.WriteLine(digit);
-                if (!validDigits.Contains(digit)) digitsValid = false; // TODO case sensitive 
+            // loop through source checking for validity of digits
+            for (int i = (offset + prefix.Length); i < sourceChars.Length; i++) {
+                // digit is not valid / not found
+                if (!validDigits.Contains(sourceChars[i])) {
+                    DigitsValid = false; // TODO case sensitive 
+                    return "Error (unrecognized digit)";
+                }
+                // Console.WriteLine(sourceChars[i]);
             }
-            Console.WriteLine($"validDigits: {validDigits}");
+
+            // CONVERSION
+
+            for (int i = 0; i < sourceChars.Length - (offset + prefix.Length); i++ ) {
+                Console.WriteLine($"I: {i}");
+                decimalRepresentation += double.Parse(Array.IndexOf(digits, sourceChars[sourceChars.Length - i - 1]).ToString()) * Math.Pow((double) baseFrom, (double) i);
+            }
+
+
+
+            /*
+            Console.WriteLine($"Positive: {IsPositive}");
+            Console.WriteLine($"Prefix: {prefix}");
+            Console.WriteLine($"SLICE {offset + prefix.Length}");
+            Console.WriteLine("validDigits: ");
+            foreach (char digit in validDigits) {
+                Console.Write(digit);
+            }
+            Console.WriteLine();
+            Console.WriteLine($"DigitsValid: {DigitsValid}");
+            Console.WriteLine($"Decimal: {decimalRepresentation}");
+            */
 
             return "";
         }
 
         public static void Main(string[] args) {
 
-            string source;
+            string source = "";
             int baseFrom, baseTo;
 
             // guard clauses / guard loops for arguments
@@ -62,8 +93,8 @@ namespace Task_1 {
             do {
                 Console.WriteLine("Type in Source string");
                 source = Console.ReadLine();
-                if (source == "") Console.WriteLine("Error: empty source string");
-            } while (source == "");
+                if (source == "") Console.WriteLine("Error: faulty source string");
+            } while (source == "" || source.Length >= 255);
 
             do {
                 Console.WriteLine("Type in Source baseFrom");
@@ -79,6 +110,9 @@ namespace Task_1 {
 
 
             Console.WriteLine(Convert(source, baseFrom, baseTo));
+            
+            // HOLD THE LINE (terminal window) !!!
+            Console.ReadLine();
         }
     }
 }
