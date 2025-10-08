@@ -19,18 +19,11 @@ namespace Task_1 {
             bool digitsValid = true;
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-            // Guardian clauses
-            /*
-            if(source == "") return "Error: empty source string";
-            if (!(baseFrom <= 16) || !(baseFrom >= 2)) return "Error: baseFrom out of range";
-            if (!(baseTo <= 16) || !(baseTo >= 2)) return "Error: baseTo out of range";
-            */
+
 
             // check for sign
             if (source.ToCharArray()[0] == '-') IsPositive = false;
             Console.WriteLine($"Positive: {IsPositive}");
-
-
 
             // check for prefix
             int offset = IsPositive ? 0 : 1;
@@ -41,13 +34,13 @@ namespace Task_1 {
             }
             Console.WriteLine($"Prefix: {prefix}");
 
-
-
             // check for valid digits
             char[] validDigits = new char[baseFrom];
             Array.Copy(digits, validDigits, baseFrom);
 
-            // char[] truncatedValidDigits = validDigits[3..];
+            // TODO slice prefix and negative off of source
+            char[] truncatedValidDigits = validDigits[3..];
+
 
             // loop through source and check for digit match
             foreach (char digit in source.ToCharArray()) {
@@ -63,6 +56,8 @@ namespace Task_1 {
 
             string source;
             int baseFrom, baseTo;
+
+            // guard clauses / guard loops for arguments
 
             do {
                 Console.WriteLine("Type in Source string");
