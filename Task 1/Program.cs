@@ -9,7 +9,8 @@ namespace Task_1 {
         public static string Convert(string source, int baseFrom, int baseTo) {
 
             char[] sourceChars = source.ToCharArray();
-            double decimalRepresentation = 0;
+            int decimalRepresentation = 0;
+            String finalNum = "";
 
             // sign related variables
             bool IsPositive = true;
@@ -19,10 +20,7 @@ namespace Task_1 {
             string[] prefixes = { "0b", "0x", "0" };
 
             // digit related variables
-            bool DigitsValid = true;
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
-
 
             // SIGN CHECK
             if (sourceChars[0] == '-') IsPositive = false;
@@ -37,7 +35,8 @@ namespace Task_1 {
                     break;
                 }
             }
-
+            
+            // Prefix base guard clauses
             if (prefix == "0" && baseFrom != 8) return "Error (source base ambiguous)";
             if (prefix == "0b" && baseFrom != 2) return "Error (source base ambiguous)";
             if (prefix == "0x" && baseFrom != 16) return "Error (source base ambiguous)";
@@ -49,38 +48,38 @@ namespace Task_1 {
             Array.Copy(digits, validDigits, baseFrom);
 
             // loop through source checking for validity of digits
-            for (int i = (offset + prefix.Length); i < sourceChars.Length; i++) {
+            for (int i = (offset + prefix.Length); i < sourceChars.Length; i++) { 
                 // digit is not valid / not found
-                if (!validDigits.Contains(sourceChars[i])) {
-                    DigitsValid = false; // TODO case sensitive 
-                    return "Error (unrecognized digit)";
+                if (!validDigits.Contains(sourceChars[i])) { 
+                    return "Error (unrecognized digit)";    //TODO case sensitive
                 }
-                // Console.WriteLine(sourceChars[i]);
             }
 
             // CONVERSION
 
+            // multiply digit w coresponding power of baseFrom and add as decimal
             for (int i = 0; i < sourceChars.Length - (offset + prefix.Length); i++ ) {
-                Console.WriteLine($"I: {i}");
-                decimalRepresentation += double.Parse(Array.IndexOf(digits, sourceChars[sourceChars.Length - i - 1]).ToString()) * Math.Pow((double) baseFrom, (double) i);
+                decimalRepresentation += int.Parse(Array.IndexOf(digits, sourceChars[sourceChars.Length - i - 1]).ToString()) * (int) Math.Pow((double) baseFrom, (double) i);
             }
 
+            if (!IsPositive) decimalRepresentation = -decimalRepresentation;
+            if (baseTo == 10) return decimalRepresentation.ToString();
 
+            Stack<Char> baseToStack = new Stack<Char>();
+            int rest = decimalRepresentation;
+            int counter = 0;
 
-            /*
-            Console.WriteLine($"Positive: {IsPositive}");
-            Console.WriteLine($"Prefix: {prefix}");
-            Console.WriteLine($"SLICE {offset + prefix.Length}");
-            Console.WriteLine("validDigits: ");
-            foreach (char digit in validDigits) {
-                Console.Write(digit);
+            while (rest != 0) {
+                baseToStack.Push(digits[rest % baseTo]);
+                rest = rest / baseTo;
+                counter++;
             }
-            Console.WriteLine();
-            Console.WriteLine($"DigitsValid: {DigitsValid}");
-            Console.WriteLine($"Decimal: {decimalRepresentation}");
-            */
 
-            return "";
+            while (baseToStack.Count() != 0){
+                finalNum = $"{finalNum}{baseToStack.Pop()}";
+            }
+
+            return finalNum;
         }
 
         public static void Main(string[] args) {
