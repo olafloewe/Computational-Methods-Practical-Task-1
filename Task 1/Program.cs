@@ -115,3 +115,14 @@ namespace Task_1 {
         }
     }
 }
+
+/* 
+ * can use toString???
+ * can use toCharArray
+ * 
+ * maybe array contains / index of
+ * maybe substring
+ * 
+ * no int.parse
+ * no math.pow
+*/
