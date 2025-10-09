@@ -51,7 +51,7 @@ namespace Task_1 {
             for (int i = (offset + prefix.Length); i < sourceChars.Length; i++) { 
                 // digit is not valid / not found
                 if (!validDigits.Contains(sourceChars[i])) { 
-                    return "Error (unrecognized digit)";    //TODO case sensitive
+                    return "Error (unrecognized digit)";
                 }
             }
 
@@ -88,7 +88,6 @@ namespace Task_1 {
             int baseFrom, baseTo;
 
             // guard clauses / guard loops for arguments
-
             do {
                 Console.WriteLine("Type in Source string");
                 source = Console.ReadLine();
