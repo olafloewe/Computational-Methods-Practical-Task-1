@@ -11,9 +11,7 @@ namespace Task_1 {
             char[] sourceChars = source.ToCharArray();
             int decimalRepresentation = 0;
             String finalNum = "";
-
-            // sign related variables
-            bool IsPositive = true;
+            int power = 0;
 
             // prefix related variables
             string prefix = "";
@@ -21,12 +19,13 @@ namespace Task_1 {
 
             // digit related variables
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            int[] values = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
             // SIGN CHECK
-            if (sourceChars[0] == '-') IsPositive = false;
+            bool IsPositive = (sourceChars[0] == '-') ? false : true;
 
             // PREFIX CHECK
-            int offset = IsPositive ? 0 : 1;
+            int offset = (IsPositive) ? 0 : 1;
 
             // find if any prefix matches substring leading "source"
             foreach (string p in prefixes) {
@@ -57,21 +56,34 @@ namespace Task_1 {
 
             // CONVERSION
 
-            // multiply digit w coresponding power of baseFrom and add as decimal
+            // multiply digit with coresponding power of baseFrom and add as decimal
             for (int i = 0; i < sourceChars.Length - (offset + prefix.Length); i++ ) {
-                decimalRepresentation += int.Parse(Array.IndexOf(digits, sourceChars[sourceChars.Length - i - 1]).ToString()) * (int) Math.Pow((double) baseFrom, (double) i);
+                // memoization of power
+                power = (power == 0)? 1 : power * baseFrom;
+                int value = 0;
+
+                // find value of a digit by matching its index to index of char in digits array
+                for (int j = 0; j < values.Length; j++) {
+                    if ($"{sourceChars[sourceChars.Length - i - 1]}" == $"{digits[digits.Length - j - 1]}") {
+                        value = values[values.Length - j - 1];
+                        break;
+                    }
+                }
+                decimalRepresentation += (value * power);
             }
+
+            // FINALIZATION
 
             if (!IsPositive) decimalRepresentation = -decimalRepresentation;
             if (baseTo == 10) return decimalRepresentation.ToString();
 
             Stack<Char> baseToStack = new Stack<Char>();
-            int rest = decimalRepresentation;
+            int remainder = decimalRepresentation;
             int counter = 0;
 
-            while (rest != 0) {
-                baseToStack.Push(digits[rest % baseTo]);
-                rest = rest / baseTo;
+            while (rest != 0){
+                baseToStack.Push(digits[remainder % baseTo]);
+                remainder = remainder / baseTo;
                 counter++;
             }
 
@@ -124,4 +136,5 @@ namespace Task_1 {
  * 
  * no int.parse
  * no math.pow
+ * no indexOf
 */
