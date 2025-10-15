@@ -81,7 +81,7 @@ namespace Task_1 {
             int remainder = decimalRepresentation;
             int counter = 0;
 
-            while (rest != 0){
+            while (remainder != 0){
                 baseToStack.Push(digits[remainder % baseTo]);
                 remainder = remainder / baseTo;
                 counter++;
