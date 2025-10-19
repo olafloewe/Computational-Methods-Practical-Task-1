@@ -9,7 +9,7 @@ namespace Task_1 {
         public static string Convert(string source, int baseFrom, int baseTo) {
 
             char[] sourceChars = source.ToCharArray();
-            int decimalRepresentation = 0;
+            ulong decimalRepresentation = 0;
             String finalNum = "";
             int power = 0;
 
@@ -19,7 +19,7 @@ namespace Task_1 {
 
             // digit related variables
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-            int[] values = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+            ulong[] values = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
             // SIGN CHECK
             bool IsPositive = (sourceChars[0] == '-') ? false : true;
@@ -60,7 +60,7 @@ namespace Task_1 {
             for (int i = 0; i < sourceChars.Length - (offset + prefix.Length); i++ ) {
                 // memoization of power
                 power = (power == 0)? 1 : power * baseFrom;
-                int value = 0;
+                ulong value = 0;
 
                 // find value of a digit by matching its index to index of char in digits array
                 for (int j = 0; j < values.Length; j++) {
@@ -69,21 +69,19 @@ namespace Task_1 {
                         break;
                     }
                 }
-                decimalRepresentation += (value * power);
+                decimalRepresentation += (value * (ulong)power);
             }
 
             // FINALIZATION
-
-            if (!IsPositive) decimalRepresentation = -decimalRepresentation;
-            if (baseTo == 10) return decimalRepresentation.ToString();
+            if (baseTo == 10) return (IsPositive) ? $"{decimalRepresentation.ToString()}" : $"-{decimalRepresentation.ToString()}" ;
 
             Stack<Char> baseToStack = new Stack<Char>();
-            int remainder = decimalRepresentation;
+            ulong remainder = decimalRepresentation;
             int counter = 0;
 
             while (remainder != 0){
-                baseToStack.Push(digits[remainder % baseTo]);
-                remainder = remainder / baseTo;
+                baseToStack.Push(digits[remainder % (ulong)baseTo]);
+                remainder = remainder / (ulong)baseTo;
                 counter++;
             }
 
@@ -91,7 +89,7 @@ namespace Task_1 {
                 finalNum = $"{finalNum}{baseToStack.Pop()}";
             }
 
-            return finalNum;
+            return (IsPositive)? finalNum : $"-{finalNum}";
         }
 
         public static void Main(string[] args) {
@@ -126,15 +124,3 @@ namespace Task_1 {
         }
     }
 }
-
-/* 
- * can use toString???
- * can use toCharArray
- * 
- * maybe array contains / index of
- * maybe substring
- * 
- * no int.parse
- * no math.pow
- * no indexOf
-*/
